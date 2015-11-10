@@ -1,20 +1,12 @@
 FROM ubuntu:14.04
 
 # Install dependencies
-RUN apt-get update -y
-RUN apt-get install -y git curl apache2 php5 libapache2-mod-php5 php5-mcrypt php5-mysql
+RUN apt-get install maven -y
 
-# Install app
-RUN rm -rf /var/www/*
-ADD src /var/www
+# Launch maven and run build 
+RUN mvn clean
+RUN mvn install
+ENV mvn jetty:run
 
-# Configure apache
-RUN a2enmod rewrite
-RUN chown -R www-data:www-data /var/www
-ENV APACHE_RUN_USER www-data
-ENV APACHE_RUN_GROUP www-data
-ENV APACHE_LOG_DIR /var/log/apache2
+EXPOSE 8080
 
-EXPOSE 8088
-
-CMD ["/usr/sbin/apache2", "-D",  "FOREGROUND"]
